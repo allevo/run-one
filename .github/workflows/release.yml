@@ -1,0 +1,47 @@
+name: Build and Release
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build release binaries
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Prepare artifacts
+        run: |
+          mkdir -p artifacts
+          cp target/${{ matrix.target }}/release/run-one-until-success artifacts/run-one-until-success-${{ matrix.target }}
+          cp target/${{ matrix.target }}/release/run-one-until-fail artifacts/run-one-until-fail-${{ matrix.target }}
+
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/run-one-until-success-${{ matrix.target }}
+            artifacts/run-one-until-fail-${{ matrix.target }}
+          token: ${{ secrets.GITHUB_TOKEN }}
