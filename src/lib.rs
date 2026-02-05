@@ -134,7 +134,10 @@ mod tests {
         let result = parse_args(args, vars);
 
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("Unable to get the command"));
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("Unable to get the command"));
     }
 
     #[test]
@@ -145,7 +148,10 @@ mod tests {
         let result = parse_args(args, vars);
 
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("Unable to get the name of the program"));
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("Unable to get the name of the program"));
     }
 
     #[test]
@@ -197,7 +203,10 @@ mod tests {
         let result = run(&cmd);
 
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("Failed to execute"));
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("Failed to execute"));
     }
 
     #[test]
